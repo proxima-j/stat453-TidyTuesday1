@@ -79,6 +79,10 @@ newWheels  %>%
   theme_map()+
   theme(legend.position = "right")
 ```
-## Most of countries around the world contains less than five wheels or even no wheel. USA contains the most wheels around the world, over 15, following by Japan and China which is around 15 and 10.
+## Research Question:
+What is the distribution of wheels around the world?
+
+## Description:
+Most countries around the world contain less than five wheels or even no wheel. In which the USA has the most wheels with over 15, followed by Japan and China with about 15 and 10.
 
 
