@@ -1,0 +1,84 @@
+---
+title: 'Tidy Tuesday #1'
+author: "Jenny Li"
+output: 
+  html_document:
+    df_print: paged
+    code_download: true
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
+```
+
+
+```{r libraries}
+library(tidyverse)     # for graphing and data cleaning
+library(lubridate)     # for date manipulation
+library(ggthemes)      # for even more plotting themes
+library(janitor)       # for cleaning variable names
+library(geofacet)      # for special faceting with US map layout
+library(dplyr)
+library(maps)          # for map data
+library(ggmap)         # for mapping points on maps
+library(gplots)        # for col2hex() function
+Sys.setlocale("LC_TIME", "English")
+theme_set(theme_minimal())       
+```
+
+### Chart type
+map
+
+### Type of data
+NA
+
+### Reason for including the chart
+TidyTuesday
+
+### Link to data or source
+[github repository page](https://github.com/rfordatascience/tidytuesday/tree/master/data/2022/2022-08-09)
+
+### Research Question
+What is the distribution of wheels around the world?
+
+## Read in data for this week: 
+```{r}
+# Get the Data
+
+# Read in with tidytuesdayR package 
+#Install from CRAN via: install.packages("tidytuesdayR")
+# This loads the readme and all the datasets for the week of interest
+
+# Either ISO-8601 date or year/week works!
+
+tuesdata <- tidytuesdayR::tt_load('2022-08-09')
+tuesdata <- tidytuesdayR::tt_load(2022, week = 32)
+
+wheels <- tuesdata$wheels
+
+# Or read in the data manually
+
+wheels <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-08-09/wheels.csv')
+world <- map_data("world")
+```
+## Graph
+```{r, fig.alt="map showing the number of wheels around the world"}
+newWheels<- wheels %>% 
+  group_by(country) %>% 
+  summarise(number=n())
+
+newWheels  %>%
+  ggplot() +
+  geom_map(map = world,
+           aes(map_id = country,
+               fill = number )) +
+  scale_fill_continuous(type = "viridis") +
+  labs(title = "Distribution of Wheels Around the World", fill = "Number of Wheels") +
+  expand_limits(x = world$long, y = world$lat) +
+  theme_map()+
+  theme(legend.position = "right")
+```
+## Most of countries around the world contains less than five wheels or even no wheel. USA contains the most wheels around the world, over 15, following by Japan and China which is around 15 and 10.
+
+
