@@ -1,0 +1,88 @@
+---
+title: "TidyTuesday9-20"
+author: "Jenny Li"
+output: 
+  html_document:
+    df_print: paged
+    code_download: true
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error=TRUE, message=FALSE, warning=FALSE)
+```
+
+
+```{r libraries}
+library(tidyverse)     # for graphing and data cleaning
+library(lubridate)     # for date manipulation
+library(ggthemes)      # for even more plotting themes
+library(janitor)       # for cleaning variable names
+library(geofacet)      # for special faceting with US map layout
+library(dplyr)
+library(maps)          # for map data
+library(ggmap)         # for mapping points on maps
+library(gplots)        # for col2hex() function
+library(ggplot2)
+Sys.setlocale("LC_TIME", "English")
+theme_set(theme_minimal())       
+```
+
+### Chart type
+map
+
+### Type of data
+NA
+
+### Reason for including the chart
+TidyTuesday
+
+### Link to data or source
+[github repository page](https://github.com/rfordatascience/tidytuesday/tree/master/data/2022/2022-08-09)
+
+### Research Question
+What is the distribution of wheels around the world?
+
+## Read in data for this week: 
+```{r}
+# Get the Data
+
+# Read in with tidytuesdayR package 
+#Install from CRAN via: install.packages("tidytuesdayR")
+# This loads the readme and all the datasets for the week of interest
+
+# Either ISO-8601 date or year/week works!
+
+tuesdata <- tidytuesdayR::tt_load('2022-08-09')
+tuesdata <- tidytuesdayR::tt_load(2022, week = 38)
+
+wasteWater <- tuesdata$HydroWASTE_v10
+```
+## Graph
+```{r, fig.alt=""}
+newWasteWater<-wasteWater %>% 
+  group_by(COUNTRY) %>% 
+  mutate(perCapita=WASTE_DIS/POP_SERVED)
+newWasteWater %>% 
+  ggplot(aes(x=LON_WWTP,y=LAT_WWTP,color=perCapita,size=RIVER_DIS))+
+  geom_point()
+
+newWasteWater %>% 
+  ggplot(aes(x=perCapita,y=RIVER_DIS,label=CNTRY_ISO))+
+  geom_point()+
+  geom_text(check_overlap = TRUE)
+  #geom_text(check_overlap = TRUE)
+
+newWasteWate2<-newWasteWater %>% 
+  filter(CNTRY_ISO=="BRA")
+
+newWasteWate2 %>% 
+  ggplot()+
+  geom_point(aes(x=LON_WWTP,y=LAT_WWTP,color="red"))+
+  geom_point(aes(x=LON_OUT,y=LAT_OUT))
+```
+## Research Question:
+What is river discharge vs treated wastewater discharged per capita with in each country?
+
+## Description:
+Brazil and Belgium are two outliers in two opposite directions. Which is interesting since in Belgium there is nearly no recorded river outfall but the wastewater discharged is larger. Vice versa in Brazil.
